@@ -1,0 +1,43 @@
+<resources>
+  <layout id="MainLayout">
+    <drawable id="UI" />
+    <label text="Target" x="20" y="center"
+      font="Gfx.FONT_SMALL" color="Gfx.COLOR_WHITE"
+      justification="Gfx.TEXT_JUSTIFY_LEFT" />
+    <label id="target_value" x="center" y="center"
+      font="Gfx.FONT_LARGE" color="Gfx.COLOR_WHITE"
+      justification="Gfx.TEXT_JUSTIFY_CENTER" />
+
+    <label text="Distance" x="150" y="2"
+      font="Gfx.FONT_SMALL" color="Gfx.COLOR_WHITE"
+      justification="Gfx.TEXT_JUSTIFY_LEFT" />
+    <label id="distance_value" x="150" y="20"
+      font="Gfx.FONT_MEDIUM" color="Gfx.COLOR_WHITE"
+      justification="Gfx.TEXT_JUSTIFY_LEFT" />
+
+    <label text="Reps" x="15" y="2"
+      font="Gfx.FONT_SMALL" color="Gfx.COLOR_WHITE"
+      justification="Gfx.TEXT_JUSTIFY_LEFT" />
+    <label id="reps_value" x="15" y="20"
+      font="Gfx.FONT_MEDIUM" color="Gfx.COLOR_WHITE"
+      justification="Gfx.TEXT_JUSTIFY_LEFT" />
+
+    <label text="Rest" x="20" y="115"
+      font="Gfx.FONT_SMALL" color="Gfx.COLOR_WHITE"
+      justification="Gfx.TEXT_JUSTIFY_LEFT" />
+    <label id="rest_value" x="center" y="110"
+      font="Gfx.FONT_LARGE" color="Gfx.COLOR_WHITE"
+      justification="Gfx.TEXT_JUSTIFY_CENTER" />
+  </layout>
+  <drawable-list id="UI" width="fill" height="fill">
+    <shape type="rectangle" x="0" y="0" width="60" height="50"
+      color="Gfx.COLOR_BLACK" border_width="1" border_color="Gfx.COLOR_WHITE" />
+    <shape type="rectangle" x="60" y="0" width="85" height="50"
+      color="Gfx.COLOR_BLACK" border_width="1" border_color="Gfx.COLOR_WHITE" />
+    <shape type="rectangle" x="145" y="0" width="60" height="50"
+      color="Gfx.COLOR_BLACK" border_width="1" border_color="Gfx.COLOR_WHITE" />
+
+    <shape type="rectangle" x="0" y="center" width="fill" height="50"
+      color="Gfx.COLOR_BLACK" border_width="1" border_color="Gfx.COLOR_WHITE" />
+  </drawable-list>
+</resources>
