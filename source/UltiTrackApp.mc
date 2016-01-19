@@ -3,7 +3,7 @@ using Toybox.Application as App;
 var propertiesNames = ["target", "distance", "rest", "reps"];
 var defaultProperties = {
   "distance" => 200,
-  "rest" => 60,
+  "rest" => 10,
   "reps" => 1
 };
 

@@ -27,19 +27,38 @@ class TimerView extends Ui.View {
     var elapsed = app.workout.timer.elapsed;
     var string = "";
 
-    if (app.workout.running &&
-        app.workout.mode == :run) {
-      string = ((elapsed / 10).toFloat() / 100).format("%03.2f");
+    var segment = app.workout.getCurrentSegment();
+
+    if (app.workout.running) {
+      if (segment[0] == :run) {
+        string = ((elapsed / 10).toFloat() / 100).format("%03.2f");
+      } else {
+        var prevSegment = app.workout.getPrevSegment();
+        var nextSegment = app.workout.getNextSegment();
+        if (prevSegment != null) {
+          string = ((prevSegment[3] / 10).toFloat() / 100).format("%03.2f");
+        } else if (nextSegment != null) {
+          string = (nextSegment[1] / 1000) + "s";
+        }
+      }
     } else {
       var time = app.getProperty("target");
       string = time + "s";
     }
     targetElem.setText(string);
 
-    if (app.workout.running &&
-        app.workout.mode == :rest) {
-      string = ((app.workout.target - app.workout.timer.elapsed + 600) /
+    string = "";
+
+    if (app.workout.running) {
+      if (segment[0] == :rest) {
+        string = ((segment[1] - app.workout.timer.elapsed + 600) /
 1000).format("%d");
+      } else {
+        var nextSegment = app.workout.getNextSegment();
+        if (nextSegment != null) {
+          string = (nextSegment[1] / 1000) + "s";
+        }
+      }
     } else {
       var rest = app.getProperty("rest");
       string = rest + "s";
@@ -57,9 +76,10 @@ class TimerView extends Ui.View {
   function drawReps(app) {
     var elem = findDrawableById("reps_value");
     var reps = app.getProperty("reps");
+    var currentRep = app.workout.getCurrentRep();
     var string;
-    if (app.workout.timer.elapsed > 0) {
-      string = 1 + "/" + reps;
+    if (app.workout.running == true) {
+      string = currentRep + "/" + reps;
     } else {
       string = reps.format("%d");
     }
@@ -69,21 +89,32 @@ class TimerView extends Ui.View {
   function onTick(elapsed) {
     System.println(elapsed);
     var app = App.getApp();
-    if (app.workout.mode == :rest) {
-      if (elapsed < app.workout.target) {
-        if (elapsed % 1000 == 0) {
+    var segment = app.workout.getCurrentSegment();
+    if (elapsed < segment[1]) {
+      if (elapsed % 1000 == 0) {
+        if ((segment[1] - elapsed) / 1000 <= 5) {
+          System.println("Countdown alert!");
           Attention.playTone(Attention.TONE_LOUD_BEEP);
         }
       }
     }
 
-    if (elapsed == app.workout.target) {
+    if (elapsed == segment[1]) {
       Attention.backlight(true);
       Attention.playTone(Attention.TONE_START);
-      app.workout.switchMode();
-    ///} else if (elapsed == 10 * 1000) {
-    //  Attention.backlight(true);
-    //  Attention.playTone(Attention.TONE_TIME_ALERT);
+      if (segment[0] == :rest) {
+        app.workout.switchMode();
+      }
+    }
+
+    if (segment[0] == :run &&
+        elapsed < segment[1] &&
+        segment[2] > 100) {
+      var split = segment[1] / (segment[2] / 100);
+      if (elapsed % split == 0) {
+        Attention.playTone(Attention.TONE_LAP);
+        System.println("Split time!");
+      }
     }
 
     drawReps(app);
@@ -170,12 +201,16 @@ class TimerInputDelegate extends Ui.BehaviorDelegate {
 
     if (key == 4) { // Start in the emulator
       if (app.workout.running) {
-        if (app.workout.mode == :rest) {
+        var segment = app.workout.getCurrentSegment();
+        if (segment[0] == :rest) {
           app.workout.stop();
         } else {
           Attention.playTone(Attention.TONE_STOP);
           app.workout.switchMode();
         }
+      } else if (app.workout.currentSegment != 0) {
+         app.workout.reset();
+         Ui.requestUpdate();
       } else {
         Attention.playTone(Attention.TONE_START);
         app.workout.start();
