@@ -27,7 +27,7 @@ var preferences = {
 };
 
 class UltiTrackApp extends App.AppBase {
-  var views = [1];
+  var view;
   var workout;
 
   function onStart() {
@@ -51,12 +51,12 @@ class UltiTrackApp extends App.AppBase {
   }
 
   function getInitialView() {
-    views[0] = new TimerView();
+    view = new TimerView();
     return [ views[0], new TimerInputDelegate() ];
   }
 
   function onTick(elapsed) {
-    views[0].onTick(elapsed);
+    view.onTick(elapsed);
   }
 }
 
