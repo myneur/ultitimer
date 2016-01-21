@@ -2,9 +2,12 @@ using Toybox.Graphics as Gfx;
 using Toybox.WatchUi as Ui;
 using Toybox.Application as App;
 
-class TimePicker extends Ui.Picker {
-  function initialize(range, def) {
-    var title = new Ui.Text({:text=>"Target time for 200m"});
+class NumberPicker extends Ui.Picker {
+  function initialize(range, def, text) {
+    var title = new Ui.Text({
+      :text=>"              " + text,
+      :font=>Gfx.FONT_SMALL,
+      :justification=>Gfx.TEXT_JUSTIFY_LEFT});
     var factories = new [1];
     factories[0] = new NumberFactory(range[0], range[1], 1);
 
@@ -23,6 +26,8 @@ class TargetPickerDelegate extends Ui.PickerDelegate {
 
   function onAccept(values) {
     App.getApp().setProperty("target", values[0]);
+    var distance = App.getApp().getProperty("distance");
+    App.getApp().setProperty("manualTargetPM", values[0] * 1000 / distance);
     Ui.popView(Ui.SLIDE_IMMEDIATE);
   }
 }
@@ -34,6 +39,17 @@ class RestPickerDelegate extends Ui.PickerDelegate {
 
   function onAccept(values) {
     App.getApp().setProperty("rest", values[0]);
+    Ui.popView(Ui.SLIDE_IMMEDIATE);
+  }
+}
+
+class RepsPickerDelegate extends Ui.PickerDelegate {
+  function onCancel() {
+    Ui.popView(Ui.SLIDE_IMMEDIATE);
+  }
+
+  function onAccept(values) {
+    App.getApp().setProperty("reps", values[0]);
     Ui.popView(Ui.SLIDE_IMMEDIATE);
   }
 }

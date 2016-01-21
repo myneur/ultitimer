@@ -1,14 +1,11 @@
 using Toybox.WatchUi as Ui;
 using Toybox.Graphics as Gfx;
-using Toybox.Attention as Attention;
 using Toybox.Application as App;
+using Toybox.Attention as Attention;
 
 
 class TimerView extends Ui.View {
-  var mDC;
-
   function onLayout(dc) {
-    mDC = dc;
     setLayout(Rez.Layouts.MainLayout(dc));
   }
 
@@ -87,70 +84,44 @@ class TimerView extends Ui.View {
   }
 
   function onTick(elapsed) {
-    System.println(elapsed);
-    var app = App.getApp();
-    var segment = app.workout.getCurrentSegment();
-    if (elapsed < segment[1]) {
-      if (elapsed % 1000 == 0) {
-        if ((segment[1] - elapsed) / 1000 <= 5) {
-          System.println("Countdown alert!");
-          Attention.playTone(Attention.TONE_LOUD_BEEP);
-        }
-      }
-    }
-
-    if (elapsed == segment[1]) {
-      Attention.backlight(true);
-      Attention.playTone(Attention.TONE_START);
-      if (segment[0] == :rest) {
-        app.workout.switchMode();
-      }
-    }
-
-    if (segment[0] == :run &&
-        elapsed < segment[1] &&
-        segment[2] > 100) {
-      var split = segment[1] / (segment[2] / 100);
-      if (elapsed % split == 0) {
-        Attention.playTone(Attention.TONE_LAP);
-        System.println("Split time!");
-      }
-    }
-
-    drawReps(app);
-    drawTargetAndRest(app);
-    View.onUpdate(mDC);
+    Ui.requestUpdate();
   }
 }
 
 var UIBoxes = {
   "distance" => {
-    "x" => [145, 205],
-    "y" => [0, 50]
+    "x" => [120, 205],
+    "y" => [0, 80]
   },
   "reps" => {
-    "x" => [0, 65],
-    "y" => [0, 50]
+    "x" => [0, 105],
+    "y" => [0, 80]
   },
   "target" => {
     "x" => [50, 155],
-    "y" => [60, 120]
+    "y" => [80, 140]
   },
   "rest" => {
     "x" => [50, 155],
-    "y" => [120, 180]
+    "y" => [140, 200]
   }
 };
 
 class TimerInputDelegate extends Ui.BehaviorDelegate {
+  var lastManualInput = [0,0];
+
   function onMenu() {
     return true;
   }
 
   function onTap(evt) {
     var cords = evt.getCoordinates();
+    if (App.getApp().workout.running) {
+      return;
+    }
 
     if (isPointInBox(cords, UIBoxes["distance"])) {
+      var manualTargetPM = App.getApp().getProperty("manualTargetPM");
       var oldDistance = App.getApp().getProperty("distance");
       var currIndex = arrayIndexOf(defaultDistances, oldDistance);
 
@@ -160,32 +131,39 @@ class TimerInputDelegate extends Ui.BehaviorDelegate {
       }
       var distance = defaultDistances[currIndex];
       App.getApp().setProperty("distance", distance);
-      var time = defaultTargets[distance];
+
+      System.println(manualTargetPM);
+      var time = (manualTargetPM * distance) / 1000;
+
       App.getApp().setProperty("target", time);
       Ui.requestUpdate();
       return;
     }
 
-    if (isPointInBox(cords, UIBoxes["reps"])) {
-      var reps = App.getApp().getProperty("reps");
-
-      reps += 1;
-      if (reps >= 5) {
-         reps = 1;
-      }
-      App.getApp().setProperty("reps", reps);
-      Ui.requestUpdate();
-      return;
-    }
+    var distance = App.getApp().getProperty("distance");
 
     if (isPointInBox(cords, UIBoxes["target"])) {
       var time = App.getApp().getProperty("target");
-      Ui.pushView(new TimePicker([1, 180], time - 1), new TargetPickerDelegate(), Ui.SLIDE_IMMEDIATE);
+      Ui.pushView(
+        new NumberPicker([1, 180], time - 1, "Target time for " + distance + "m"),
+        new TargetPickerDelegate(),
+        Ui.SLIDE_IMMEDIATE);
     }
 
     if (isPointInBox(cords, UIBoxes["rest"])) {
       var rest = App.getApp().getProperty("rest");
-      Ui.pushView(new TimePicker([1, 180], rest - 1), new RestPickerDelegate(), Ui.SLIDE_IMMEDIATE);
+      Ui.pushView(
+        new NumberPicker([1, 180], rest - 1, "Rest time for " + distance + "m"),
+        new RestPickerDelegate(),
+        Ui.SLIDE_IMMEDIATE);
+    }
+
+    if (isPointInBox(cords, UIBoxes["reps"])) {
+      var reps = App.getApp().getProperty("reps");
+      Ui.pushView(
+        new NumberPicker([1, 12], reps - 1, "Number of reps"),
+        new RepsPickerDelegate(),
+        Ui.SLIDE_IMMEDIATE);
     }
   }
 
@@ -200,20 +178,34 @@ class TimerInputDelegate extends Ui.BehaviorDelegate {
     var app = App.getApp();
 
     if (key == 4) { // Start in the emulator
-      if (app.workout.running) {
-        var segment = app.workout.getCurrentSegment();
+      var segment = app.workout.getCurrentSegment();
+      if (app.workout.running && segment != null) {
         if (segment[0] == :rest) {
-          app.workout.stop();
+          if (app.workout.timer.running) {
+            Attention.backlight(true);
+            Attention.playTone(Attention.TONE_STOP);
+            app.workout.stop();
+          } else {
+            Attention.backlight(true);
+            Attention.playTone(Attention.TONE_STOP);
+            app.workout.unpause();
+          }
         } else {
+          Attention.backlight(true);
           Attention.playTone(Attention.TONE_STOP);
           app.workout.switchMode();
         }
-      } else if (app.workout.currentSegment != 0) {
-         app.workout.reset();
-         Ui.requestUpdate();
       } else {
-        Attention.playTone(Attention.TONE_START);
-        app.workout.start();
+        if (app.workout.segments.size() > 0) {
+          Attention.backlight(true);
+          Attention.playTone(Attention.TONE_STOP);
+          app.workout.reset();
+          Ui.requestUpdate();
+        } else {
+          Attention.backlight(true);
+          Attention.playTone(Attention.TONE_START);
+          app.workout.start();
+        }
       }
     }
   }
@@ -221,7 +213,7 @@ class TimerInputDelegate extends Ui.BehaviorDelegate {
   function onBack(evt) {
     var app = App.getApp();
 
-    if (app.workout.timer.elapsed == 0.0) {
+    if (app.workout.running == false) {
       return false;
     } else {
       app.workout.reset(); 

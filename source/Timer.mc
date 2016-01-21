@@ -6,6 +6,8 @@ class UltiTimer {
 
   var mOnTick;
   var mTimer;
+  var mLastTime = 0;
+  var mInterval = 50;
 
   function initialize(onTick) {
     mOnTick = onTick;
@@ -14,12 +16,15 @@ class UltiTimer {
 
   function start() {
     running = true;
-    mTimer.start(method(:onTick), 50, true); 
+    mTimer.start(method(:onTick), mInterval, true); 
+    mLastTime = System.getTimer();
     mOnTick.invoke(elapsed);
   }
 
   function onTick() {
-    elapsed += 50;
+    var now = System.getTimer();
+    elapsed += now - mLastTime;
+    mLastTime = now;
     mOnTick.invoke(elapsed);
   }
 

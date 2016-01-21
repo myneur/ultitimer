@@ -3,7 +3,7 @@ using Toybox.Application as App;
 var propertiesNames = ["target", "distance", "rest", "reps"];
 var defaultProperties = {
   "distance" => 200,
-  "rest" => 10,
+  "rest" => 60,
   "reps" => 1
 };
 
@@ -42,6 +42,7 @@ class UltiTrackApp extends App.AppBase {
     var distance = defaultProperties["distance"];
     var time = defaultTargets[distance];
     App.getApp().setProperty("target", time);
+    App.getApp().setProperty("manualTargetPM", time * 1000 / distance);
     workout = new Workout(method(:onTick)); 
   }
 
@@ -52,7 +53,7 @@ class UltiTrackApp extends App.AppBase {
 
   function getInitialView() {
     view = new TimerView();
-    return [ views[0], new TimerInputDelegate() ];
+    return [ view, new TimerInputDelegate() ];
   }
 
   function onTick(elapsed) {
