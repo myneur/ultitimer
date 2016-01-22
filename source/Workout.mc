@@ -127,7 +127,7 @@ class Workout {
         mode = :run;
       } else {
         if (i == 0) {
-          segments[i] = [:rest, 5000, null, null];
+          segments[i] = [:rest, 2000, null, null];
         } else {
           segments[i] = [:rest, rest * 1000, null, null];
         }
@@ -140,7 +140,12 @@ class Workout {
     var segment = segments[currentSegment];
     var target = segment[1];
 
-    var size = 5;
+    var countdown = 2;
+    if (segment[0] == :run) {
+      countdown = 5;
+    }
+
+    var size = countdown;
     var i = 0;
     var splits = 0;
     var distance = 0;
@@ -179,14 +184,14 @@ class Workout {
     }
     i += splits;
 
-    for (var j = 0; j < 5; j++) {
+    for (var j = 0; j < countdown; j++) {
       notifications[j + i] = [
-        target - (1000 * (5 - j)),
+        target - (1000 * (countdown - j)),
         Attention.TONE_LOUD_BEEP,
         null
       ];
     }
-    i += 5;
+    i += countdown;
 
     if (segment[0] == :run) {
       notifications[size - 1] = [

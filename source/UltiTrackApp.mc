@@ -23,7 +23,7 @@ var defaultTargets = {
 };
 
 var preferences = {
-  "countdown" => true
+  "start" => :start_on_countdown
 };
 
 class UltiTrackApp extends App.AppBase {
