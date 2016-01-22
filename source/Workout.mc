@@ -116,22 +116,38 @@ class Workout {
     var distance = app.getProperty("distance");
     var rest = app.getProperty("rest");
 
-    var size = 1 + reps + (reps - 1);
+
+    var mode;
+    var useInitialCountdown = false;
+
+    var start = app.getProperty("start");
+
+    if (start == start_on_countdown) {
+      mode = :rest;
+      useInitialCountdown = true;
+    } else {
+      mode = :run;
+    }
+
+    var size = reps + (reps - 1);
+
+    if (useInitialCountdown) {
+      size += 1;
+    }
+
     segments = new [size];
 
-    var mode = :run;
-
     for (var i = 0; i < size; i++) {
-      if (mode == :rest) {
+      if (mode == :run) {
         segments[i] = [:run, target * 1000, distance, null];
-        mode = :run;
+        mode = :rest;
       } else {
-        if (i == 0) {
+        if (useInitialCountdown == true && i == 0) {
           segments[i] = [:rest, 2000, null, null];
         } else {
           segments[i] = [:rest, rest * 1000, null, null];
         }
-        mode = :rest;
+        mode = :run;
       }
     }
   }

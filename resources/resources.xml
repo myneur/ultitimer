@@ -1,6 +1,5 @@
 <resources>
   <layout id="MainLayout">
-    <drawable id="UI" />
     <label text="Target" x="20" y="center"
       font="Gfx.FONT_SMALL" color="Gfx.COLOR_WHITE"
       justification="Gfx.TEXT_JUSTIFY_LEFT" />
@@ -29,6 +28,14 @@
       font="Gfx.FONT_LARGE" color="Gfx.COLOR_WHITE"
       justification="Gfx.TEXT_JUSTIFY_CENTER" />
   </layout>
-  <drawable-list id="UI" width="fill" height="fill">
-  </drawable-list>
+  <menu id="MainMenu">
+    <menu-item id="menu_item_start">Start</menu-item>
+    <menu-item id="menu_item_split">Split</menu-item>
+    <menu-item id="menu_item_rest">Rest</menu-item>
+  </menu>
+
+  <menu id="StartMenu">
+    <menu-item id="menu_item_button">Button</menu-item>
+    <menu-item id="menu_item_countdown">Coutdown</menu-item>
+  </menu>
 </resources>

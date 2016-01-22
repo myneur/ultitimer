@@ -1,10 +1,18 @@
 using Toybox.Application as App;
 
-var propertiesNames = ["target", "distance", "rest", "reps"];
+enum {
+  start_on_countdown,
+  start_on_button,
+  start_on_random,
+  start_on_motion
+}
+
+var propertiesNames = ["target", "distance", "rest", "reps", "start"];
 var defaultProperties = {
   "distance" => 200,
   "rest" => 60,
-  "reps" => 1
+  "reps" => 1,
+  "start" => start_on_countdown
 };
 
 var defaultDistances = [90, 100, 120, 150, 180, 200, 220, 250, 300, 350, 400];
@@ -20,10 +28,6 @@ var defaultTargets = {
   300 => 42,
   350 => 50,
   400 => 58
-};
-
-var preferences = {
-  "start" => :start_on_countdown
 };
 
 class UltiTrackApp extends App.AppBase {
@@ -47,7 +51,6 @@ class UltiTrackApp extends App.AppBase {
   }
 
   function onStop() {
-    App.getApp().clearProperties();
     workout.destroy();
   }
 
