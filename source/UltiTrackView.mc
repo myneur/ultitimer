@@ -132,7 +132,6 @@ class TimerInputDelegate extends Ui.BehaviorDelegate {
       var distance = defaultDistances[currIndex];
       App.getApp().setProperty("distance", distance);
 
-      System.println(manualTargetPM);
       var time = (manualTargetPM * distance) / 1000;
 
       App.getApp().setProperty("target", time);
@@ -194,6 +193,7 @@ class TimerInputDelegate extends Ui.BehaviorDelegate {
           Attention.backlight(true);
           Attention.playTone(Attention.TONE_STOP);
           app.workout.switchMode();
+          Ui.requestUpdate();
         }
       } else {
         if (app.workout.segments.size() > 0) {

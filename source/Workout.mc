@@ -91,16 +91,21 @@ class Workout {
   function switchMode() {
     segments[currentSegment][3] = timer.elapsed;
     
-    currentSegment += 1;
-    timer.reset();
-
-    if (currentSegment >= segments.size()) {
-      stop();
+    if (currentSegment + 1 >= segments.size()) {
+      if (timer.running == false) {
+        reset();
+      } else {
+        timer.stop();
+        stop();
+      }
       return;
     }
 
+    currentSegment += 1;
+
     setNotifications();
     timer.stop();
+    timer.reset();
     timer.start();
   }
 
