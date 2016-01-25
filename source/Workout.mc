@@ -115,6 +115,7 @@ class Workout {
     var target = app.getProperty("target");
     var distance = app.getProperty("distance");
     var rest = app.getProperty("rest");
+    var rest_type = app.getProperty("rest_type");
 
 
     var mode;
@@ -145,7 +146,11 @@ class Workout {
         if (useInitialCountdown == true && i == 0) {
           segments[i] = [:rest, 2000, null, null];
         } else {
-          segments[i] = [:rest, rest * 1000, null, null];
+          if (rest_type == rest_type_time) {
+            segments[i] = [:rest, rest * 1000, null, null];
+          } else {
+            segments[i] = [:rest, null, null, null];
+          }
         }
         mode = :run;
       }
@@ -155,6 +160,10 @@ class Workout {
   function setNotifications() {
     var segment = segments[currentSegment];
     var target = segment[1];
+
+    if (target == null) {
+      return;
+    }
 
     var countdown = 2;
     if (segment[0] == :run) {
@@ -244,7 +253,7 @@ notifications[currentNotification + 1][0]) {
     var app = App.getApp();
     var segment = app.workout.getCurrentSegment();
 
-    if (segment[0] == :rest) {
+    if (segment[0] == :rest && segment[1] != null) {
       if (elapsed >= segment[1]) {
         app.workout.switchMode();
         return;

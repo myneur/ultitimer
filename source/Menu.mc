@@ -1,4 +1,5 @@
 using Toybox.WatchUi as Ui;
+using Toybox.Application as App;
 
 class MainMenuDelegate extends Ui.MenuInputDelegate {
   function onMenuItem(item) {
@@ -39,6 +40,14 @@ class RestMenuDelegate extends Ui.MenuInputDelegate {
 
 class RestTypeMenuDelegate extends Ui.MenuInputDelegate {
   function onMenuItem(item) {
+    var value = rest_type_time;
+    if (item == :menu_item_rest_type_time) {
+      value = rest_type_time;
+    } else if (item == :menu_item_rest_type_open) {
+      value = rest_type_open;
+    }
+    App.getApp().setProperty("rest_type", value);
+    Ui.popView(Ui.SLIDE_IMMEDIATE);
   }
 }
 

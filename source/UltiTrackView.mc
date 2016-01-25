@@ -20,6 +20,7 @@ class TimerView extends Ui.View {
   function drawTargetAndRest(app) {
     var targetElem = findDrawableById("target_value");
     var restElem = findDrawableById("rest_value");
+    var restType = app.getProperty("rest_type");
 
     var elapsed = app.workout.timer.elapsed;
     var string = "";
@@ -47,18 +48,18 @@ class TimerView extends Ui.View {
     string = "";
 
     if (app.workout.running) {
-      if (segment[0] == :rest) {
+      if (segment[0] == :rest && segment[1] != null) {
         string = ((segment[1] - app.workout.timer.elapsed + 600) /
 1000).format("%d");
       } else {
         var nextSegment = app.workout.getNextSegment();
-        if (nextSegment != null) {
+        if (nextSegment != null && nextSegment[1] != null) {
           string = (nextSegment[1] / 1000) + "s";
         }
       }
     } else {
       var reps = app.getProperty("reps");
-      if (reps > 1) {
+      if (restType == rest_type_time && reps > 1) {
         var rest = app.getProperty("rest");
         string = rest + "s";
       }

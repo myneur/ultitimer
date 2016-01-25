@@ -14,12 +14,13 @@ enum {
 
 var propertiesNames = [
   "target", "distance", "rest", "reps", "start", "rest_type"];
+
 var defaultProperties = {
   "distance" => 200,
   "rest" => 60,
   "reps" => 1,
   "start" => start_on_countdown,
-  "rest_type" => rest_type_time,
+  "rest_type" => rest_type_time
 };
 
 var defaultDistances = [90, 100, 120, 150, 180, 200, 220, 250, 300, 350, 400];
