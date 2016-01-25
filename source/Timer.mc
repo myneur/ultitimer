@@ -4,10 +4,11 @@ class UltiTimer {
   var elapsed = 0;
   var running = false;
 
+  var mInterval = 50;
+
   var mOnTick;
   var mTimer;
   var mLastTime = 0;
-  var mInterval = 50;
 
   function initialize(onTick) {
     mOnTick = onTick;
@@ -15,9 +16,9 @@ class UltiTimer {
   }
 
   function start() {
-    running = true;
     mTimer.start(method(:onTick), mInterval, true); 
     mLastTime = System.getTimer();
+    running = true;
     mOnTick.invoke(elapsed);
   }
 

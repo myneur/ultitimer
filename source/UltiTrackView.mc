@@ -20,7 +20,6 @@ class TimerView extends Ui.View {
   function drawTargetAndRest(app) {
     var targetElem = findDrawableById("target_value");
     var restElem = findDrawableById("rest_value");
-    var restType = app.getProperty("rest_type");
 
     var elapsed = app.workout.timer.elapsed;
     var string = "";
@@ -28,17 +27,6 @@ class TimerView extends Ui.View {
     var segment = app.workout.getCurrentSegment();
 
     if (app.workout.running) {
-      if (segment[0] == :run) {
-        string = ((elapsed / 10).toFloat() / 100).format("%03.2f");
-      } else {
-        var prevSegment = app.workout.getPrevSegment();
-        var nextSegment = app.workout.getNextSegment();
-        if (prevSegment != null) {
-          string = ((prevSegment[3] / 10).toFloat() / 100).format("%03.2f");
-        } else if (nextSegment != null) {
-          string = (nextSegment[1] / 1000) + "s";
-        }
-      }
     } else {
       var time = app.getProperty("target");
       string = time + "s";
@@ -48,20 +36,15 @@ class TimerView extends Ui.View {
     string = "";
 
     if (app.workout.running) {
-      if (segment[0] == :rest && segment[1] != null) {
-        string = ((segment[1] - app.workout.timer.elapsed + 600) /
-1000).format("%d");
-      } else {
-        var nextSegment = app.workout.getNextSegment();
-        if (nextSegment != null && nextSegment[1] != null) {
-          string = (nextSegment[1] / 1000) + "s";
-        }
-      }
     } else {
       var reps = app.getProperty("reps");
-      if (restType == rest_type_time && reps > 1) {
-        var rest = app.getProperty("rest");
-        string = rest + "s";
+      if(reps > 1) {
+        var restType = app.getProperty("rest_type");
+        if (restType == rest_type_open) {
+          string = "open";
+          var rest = app.getProperty("rest");
+          string = rest + "s";
+        }
       }
     }
     restElem.setText(string);
@@ -77,9 +60,9 @@ class TimerView extends Ui.View {
   function drawReps(app) {
     var elem = findDrawableById("reps_value");
     var reps = app.getProperty("reps");
-    var currentRep = app.workout.getCurrentRep();
     var string;
     if (app.workout.running == true) {
+      var currentRep = app.workout.getCurrentRep();
       string = currentRep + "/" + reps;
     } else {
       string = reps.format("%d");
@@ -89,10 +72,6 @@ class TimerView extends Ui.View {
 
   function onTick(elapsed) {
     Ui.requestUpdate();
-  }
-
-  function openTheMenu() {
-    Ui.pushView( new Rez.Menus.MainMenu(), new MainMenuDelegate(), Ui.SLIDE_UP );
   }
 }
 
@@ -121,7 +100,7 @@ class TimerInputDelegate extends Ui.BehaviorDelegate {
   function onMenu() {
     var app = App.getApp();
     if (app.workout.running == false) {
-      app.view.openTheMenu();
+      Ui.pushView( new Rez.Menus.MainMenu(), new MainMenuDelegate(), Ui.SLIDE_UP );
     }
     return true;
   }
@@ -189,35 +168,14 @@ class TimerInputDelegate extends Ui.BehaviorDelegate {
     var app = App.getApp();
 
     if (key == 4) { // Start in the emulator
-      var segment = app.workout.getCurrentSegment();
-      if (app.workout.running && segment != null) {
-        if (segment[0] == :rest) {
-          if (app.workout.timer.running) {
-            Attention.backlight(true);
-            Attention.playTone(Attention.TONE_STOP);
-            app.workout.stop();
-          } else {
-            Attention.backlight(true);
-            Attention.playTone(Attention.TONE_STOP);
-            app.workout.unpause();
-          }
-        } else {
-          Attention.backlight(true);
-          Attention.playTone(Attention.TONE_STOP);
-          app.workout.switchMode();
-          Ui.requestUpdate();
-        }
+      if (app.workout.running) {
+        app.workout.onAdvanceButton();
+        Attention.backlight(true);
+        Attention.playTone(Attention.TONE_STOP);
       } else {
-        if (app.workout.segments.size() > 0) {
-          Attention.backlight(true);
-          Attention.playTone(Attention.TONE_STOP);
-          app.workout.reset();
-          Ui.requestUpdate();
-        } else {
-          Attention.backlight(true);
-          Attention.playTone(Attention.TONE_START);
-          app.workout.start();
-        }
+        app.workout.start();
+        Attention.backlight(true);
+        Attention.playTone(Attention.TONE_START);
       }
     }
   }
