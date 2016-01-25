@@ -95,33 +95,6 @@ class TimerView extends Ui.View {
   }
 }
 
-class MainMenuDelegate extends Ui.MenuInputDelegate {
-    function onMenuItem(item) {
-        if ( item == :menu_item_start ) {
-          Ui.pushView( new Rez.Menus.StartMenu(), new StartMenuDelegate(), Ui.SLIDE_UP );
-        } else if ( item == :item_2 ) {
-            // Do something else here
-        }
-    }
-}
-
-class StartMenuDelegate extends Ui.MenuInputDelegate {
-    function onMenuItem(item) {
-      var value = start_on_countdown;
-      if ( item == :menu_item_countdown ) {
-        value = start_on_countdown;
-      } else if ( item == :menu_item_random ) {
-        value = start_on_random;
-      } else if ( item == :menu_item_button ) {
-        value = start_on_button;
-      } else if ( item == :menu_item_motion ) {
-        value = start_on_motion;
-      }
-      App.getApp().setProperty("start", value);
-      Ui.popView(Ui.SLIDE_IMMEDIATE);
-    }
-}
-
 var UIBoxes = {
   "distance" => {
     "x" => [120, 205],

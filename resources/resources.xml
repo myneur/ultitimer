@@ -35,7 +35,17 @@
   </menu>
 
   <menu id="StartMenu">
-    <menu-item id="menu_item_button">Button</menu-item>
-    <menu-item id="menu_item_countdown">Coutdown</menu-item>
+    <menu-item id="menu_item_start_button">Start on button</menu-item>
+    <menu-item id="menu_item_start_countdown">Start on coutdown</menu-item>
+  </menu>
+
+  <menu id="RestMenu">
+    <menu-item id="menu_item_rest_type">Rest type</menu-item>
+    <menu-item id="menu_item_rest_starts">Rest starts</menu-item>
+  </menu>
+
+  <menu id="RestTypeMenu">
+    <menu-item id="menu_item_rest_type_time">Time</menu-item>
+    <menu-item id="menu_item_rest_type_open">Open</menu-item>
   </menu>
 </resources>
