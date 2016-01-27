@@ -7,12 +7,18 @@ enum {
   start_on_motion
 }
 
-var propertiesNames = ["target", "distance", "rest", "reps", "start"];
+enum {
+  stop_on_button,
+  stop_on_target
+}
+
+var propertiesNames = ["target", "distance", "rest", "reps", "start", "stop"];
 var defaultProperties = {
   "distance" => 200,
   "rest" => 60,
   "reps" => 1,
-  "start" => start_on_countdown
+  "start" => start_on_countdown,
+  "stop" => stop_on_button
 };
 
 var defaultDistances = [90, 100, 120, 150, 180, 200, 220, 250, 300, 350, 400];
@@ -43,7 +49,7 @@ class UltiTrackApp extends App.AppBase {
       }
     }
 
-    var distance = defaultProperties["distance"];
+    var distance = App.getApp().getProperty("distance");
     var time = defaultTargets[distance];
     App.getApp().setProperty("target", time);
     App.getApp().setProperty("manualTargetPM", time * 1000 / distance);

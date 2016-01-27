@@ -243,8 +243,10 @@ notifications[currentNotification + 1][0]) {
 
     var app = App.getApp();
     var segment = app.workout.getCurrentSegment();
+    var stop = app.getProperty("stop");
 
-    if (segment[0] == :rest) {
+    if (segment[0] == :rest ||
+        stop == stop_on_target) {
       if (elapsed >= segment[1]) {
         app.workout.switchMode();
         return;

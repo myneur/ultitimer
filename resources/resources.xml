@@ -30,12 +30,16 @@
   </layout>
   <menu id="MainMenu">
     <menu-item id="menu_item_start">Start</menu-item>
-    <menu-item id="menu_item_split">Split</menu-item>
-    <menu-item id="menu_item_rest">Rest</menu-item>
+    <menu-item id="menu_item_stop">Stop</menu-item>
   </menu>
 
   <menu id="StartMenu">
-    <menu-item id="menu_item_button">Button</menu-item>
-    <menu-item id="menu_item_countdown">Coutdown</menu-item>
+    <menu-item id="menu_item_start_on_button">Start on button</menu-item>
+    <menu-item id="menu_item_start_on_countdown">Start on coutdown</menu-item>
+  </menu>
+
+  <menu id="StopMenu">
+    <menu-item id="menu_item_stop_on_button">Stop on button</menu-item>
+    <menu-item id="menu_item_stop_on_target">Stop on target</menu-item>
   </menu>
 </resources>
