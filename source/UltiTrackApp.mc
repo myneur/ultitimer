@@ -49,10 +49,18 @@ class UltiTrackApp extends App.AppBase {
       }
     }
 
+
+    var manualTarget = App.getApp().getProperty("manualTargetPM");
     var distance = App.getApp().getProperty("distance");
-    var time = defaultTargets[distance];
-    App.getApp().setProperty("target", time);
-    App.getApp().setProperty("manualTargetPM", time * 1000 / distance);
+
+    if (manualTarget) {
+      App.getApp().setProperty("target", manualTarget * distance / 1000);
+      App.getApp().setProperty("manualTargetPM", manualTarget);
+    } else {
+      var time = defaultTargets[distance];
+      App.getApp().setProperty("target", time);
+      App.getApp().setProperty("manualTargetPM", time * 1000 / distance);
+    }
     workout = new Workout(method(:onTick)); 
   }
 

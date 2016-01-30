@@ -185,7 +185,7 @@ class Workout {
       notifications[0] =  [
         0,
         Attention.TONE_START,
-        [new Attention.VibeProfile(400, 400)]
+        [new Attention.VibeProfile(100, 400)]
       ];
       i += 1;
     }
@@ -195,7 +195,7 @@ class Workout {
       notifications[j + i] = [
         splitTime * (j + 1),
         Attention.TONE_LAP,
-        [new Attention.VibeProfile(400, 400)]
+        [new Attention.VibeProfile( 100, 400 )]
       ];
     }
     i += splits;
@@ -213,7 +213,7 @@ class Workout {
       notifications[size - 1] = [
         target,
         Attention.TONE_TIME_ALERT,
-        [new Attention.VibeProfile(400, 400)]
+        [new Attention.VibeProfile(100, 400)]
       ];
     }
 

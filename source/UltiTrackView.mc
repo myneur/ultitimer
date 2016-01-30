@@ -227,6 +227,7 @@ class TimerInputDelegate extends Ui.BehaviorDelegate {
     if (app.workout.running == false) {
       return false;
     } else {
+      app.workout.stop();
       app.workout.reset(); 
       Ui.requestUpdate();
       return true;
