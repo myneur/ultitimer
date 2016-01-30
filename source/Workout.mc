@@ -195,7 +195,7 @@ class Workout {
       notifications[j + i] = [
         splitTime * (j + 1),
         Attention.TONE_LAP,
-        [new Attention.VibeProfile( 100, 400 )]
+        [new Attention.VibeProfile(100, 400)]
       ];
     }
     i += splits;

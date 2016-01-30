@@ -163,7 +163,7 @@ class TimerInputDelegate extends Ui.BehaviorDelegate {
     if (isPointInBox(cords, UIBoxes["rest"])) {
       var rest = App.getApp().getProperty("rest");
       Ui.pushView(
-        new NumberPicker([1, 180], rest - 1, "Rest time for " + distance + "m"),
+        new TimePicker([1, 180], rest, "Rest time for " + distance + "m"),
         new RestPickerDelegate(),
         Ui.SLIDE_IMMEDIATE);
     }

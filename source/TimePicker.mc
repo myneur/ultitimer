@@ -19,6 +19,28 @@ class NumberPicker extends Ui.Picker {
   }
 }
 
+class TimePicker extends Ui.Picker {
+  function initialize(range, def, text) {
+    var title = new Ui.Text({
+      :text=>"              " + text,
+      :font=>Gfx.FONT_SMALL,
+      :justification=>Gfx.TEXT_JUSTIFY_LEFT});
+    var factories = new [2];
+    factories[0] = new NumberFactory(0, 9, 1);
+    factories[1] = new NumberFactory(0, 59, 1);
+
+    var defaults = new [2];
+
+    var seconds = def % 60;
+    var minutes = (def - seconds) / 60;
+
+    defaults[0] = minutes;
+    defaults[1] = seconds;
+
+    Picker.initialize({:title=>title, :pattern=>factories, :defaults=>defaults});
+  }
+}
+
 class TargetPickerDelegate extends Ui.PickerDelegate {
   function onCancel() {
     Ui.popView(Ui.SLIDE_IMMEDIATE);
@@ -38,7 +60,10 @@ class RestPickerDelegate extends Ui.PickerDelegate {
   }
 
   function onAccept(values) {
-    App.getApp().setProperty("rest", values[0]);
+    var value = values[0] * 60 + values[1];
+    System.println("value:");
+    System.println(value);
+    App.getApp().setProperty("rest", value);
     Ui.popView(Ui.SLIDE_IMMEDIATE);
   }
 }
