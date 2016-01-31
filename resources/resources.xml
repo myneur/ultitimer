@@ -55,10 +55,4 @@
     <menu-item id="menu_item_workout_settings_stop_on_button">Stop on button</menu-item>
     <menu-item id="menu_item_workout_settings_stop_on_target">Stop on target</menu-item>
   </menu>
-
-
-  <strings>
-    <string id="Device">fr630</string>
-    <string id="isTouchScreen">false</string>
-  </strings>
 </resources>

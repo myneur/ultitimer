@@ -84,7 +84,7 @@ class UltiTrackApp extends App.AppBase {
   function isTouchScreen() {
     if (mIsTouchScreen == null) {
       var str = Ui.loadResource(Rez.Strings.isTouchScreen);
-      if (str == "true") {
+      if (str.equals("true")) {
         mIsTouchScreen = true;
       } else {
         mIsTouchScreen = false;

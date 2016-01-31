@@ -1,3 +1,7 @@
 <resources>
-  <string id="AppName">UltiTrack</string>
+  <strings>
+    <string id="AppName">UltiTrack</string>
+    <string id="Device">emulator</string>
+    <string id="isTouchScreen">true</string>
+  </strings>
 </resources>

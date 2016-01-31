@@ -1,1 +1,1 @@
-../bin/monkeydo ./bin/ultitrack.prg
+../bin/monkeydo ./bin/ultitrack-emulator.prg
