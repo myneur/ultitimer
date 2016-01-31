@@ -41,6 +41,27 @@ class TimePicker extends Ui.Picker {
   }
 }
 
+class DistancePicker extends Ui.Picker {
+  function initialize(text) {
+    var distance = App.getApp().getProperty("distance");
+
+    var title = new Ui.Text({
+      :text=>"              " + text,
+      :font=>Gfx.FONT_SMALL,
+      :justification=>Gfx.TEXT_JUSTIFY_LEFT});
+
+
+    var factories = new [1];
+    factories[0] = new DistanceFactory();
+
+    var defaults = new [1];
+
+    defaults[0] = arrayIndexOf(defaultDistances, distance);
+
+    Picker.initialize({:title=>title, :pattern=>factories, :defaults=>defaults});
+  }
+}
+
 class TargetPickerDelegate extends Ui.PickerDelegate {
   function onCancel() {
     Ui.popView(Ui.SLIDE_IMMEDIATE);
@@ -75,6 +96,26 @@ class RepsPickerDelegate extends Ui.PickerDelegate {
 
   function onAccept(values) {
     App.getApp().setProperty("reps", values[0]);
+    Ui.popView(Ui.SLIDE_IMMEDIATE);
+  }
+}
+
+class DistancePickerDelegate extends Ui.PickerDelegate {
+  function onCancel() {
+    Ui.popView(Ui.SLIDE_IMMEDIATE);
+  }
+
+  function onAccept(values) {
+    var manualTargetPM = App.getApp().getProperty("manualTargetPM");
+    
+    var distance = values[0];
+
+    App.getApp().setProperty("distance", distance);
+
+    var time = (manualTargetPM * distance) / 1000;
+
+    App.getApp().setProperty("target", time);
+    Ui.requestUpdate();
     Ui.popView(Ui.SLIDE_IMMEDIATE);
   }
 }
@@ -120,5 +161,19 @@ class NumberFactory extends Ui.PickerFactory {
 
   function getSize() {
     return ( mStop - mStart ) / mIncrement + 1;
+  }
+}
+
+class DistanceFactory extends Ui.PickerFactory {
+  function getSize() {
+    return defaultDistances.size();
+  }
+
+  function getValue(index) {
+    return defaultDistances[index];
+  }
+
+  function getDrawable(index, selected) {
+    return new Ui.Text( { :text=>getValue(index).format("%d"), :color=>Gfx.COLOR_WHITE, :font=> Gfx.FONT_NUMBER_HOT, :locX =>Ui.LAYOUT_HALIGN_CENTER, :locY=>Ui.LAYOUT_VALIGN_CENTER } );
   }
 }

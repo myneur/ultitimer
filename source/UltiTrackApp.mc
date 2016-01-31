@@ -22,23 +22,15 @@ var defaultProperties = {
 };
 
 var defaultDistances = [90, 100, 120, 150, 180, 200, 220, 250, 300, 350, 400];
-var defaultTargets = {
-   90 => 10,
-  100 => 12,
-  120 => 14,
-  150 => 18,
-  180 => 23,
-  200 => 30,
-  220 => 32,
-  250 => 34,
-  300 => 42,
-  350 => 50,
-  400 => 58
-};
+
+var defaultManualTargetPM = 150;
 
 class UltiTrackApp extends App.AppBase {
   var view;
   var workout;
+  
+  var mDeviceName;
+  var mIsTouchScreen;
 
   function onStart() {
     for (var i = 0; i < propertiesNames.size(); i++) {
@@ -57,9 +49,9 @@ class UltiTrackApp extends App.AppBase {
       App.getApp().setProperty("target", manualTarget * distance / 1000);
       App.getApp().setProperty("manualTargetPM", manualTarget);
     } else {
-      var time = defaultTargets[distance];
+      var time = defaultManualTargetPM * distance / 1000;
       App.getApp().setProperty("target", time);
-      App.getApp().setProperty("manualTargetPM", time * 1000 / distance);
+      App.getApp().setProperty("manualTargetPM", defaultManualTargetPM);
     }
     workout = new Workout(method(:onTick)); 
   }
@@ -70,11 +62,30 @@ class UltiTrackApp extends App.AppBase {
 
   function getInitialView() {
     view = new TimerView();
-    return [ view, new TimerInputDelegate() ];
+    return [ view, new TouchScreenInputDelegate() ];
   }
 
   function onTick(elapsed) {
     view.onTick(elapsed);
+  }
+
+  function getDeviceName() {
+    if (mDeviceName == null) {
+      mDeviceName = Ui.loadResource(Rez.Strings.Device);
+    }
+    return mDeviceName;
+  }
+
+  function isTouchScreen() {
+    if (mIsTouchScreen == null) {
+      var str = Ui.loadResource(Rez.Strings.isTouchScreen);
+      if (str == "true") {
+        mIsTouchScreen = true;
+      } else {
+        mIsTouchScreen = false;
+      }
+    }
+    return mIsTouchScreen;
   }
 }
 

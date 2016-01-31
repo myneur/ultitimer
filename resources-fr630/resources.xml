@@ -1,0 +1,6 @@
+<resources>
+  <strings>
+    <string id="Device">fr630</string>
+    <string id="isTouchScreen">true</string>
+  </strings>
+</resources>

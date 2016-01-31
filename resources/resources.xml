@@ -28,6 +28,7 @@
       font="Gfx.FONT_LARGE" color="Gfx.COLOR_WHITE"
       justification="Gfx.TEXT_JUSTIFY_CENTER" />
   </layout>
+
   <menu id="MainMenu">
     <menu-item id="menu_item_start">Start</menu-item>
     <menu-item id="menu_item_stop">Stop</menu-item>
@@ -42,4 +43,10 @@
     <menu-item id="menu_item_stop_on_button">Stop on button</menu-item>
     <menu-item id="menu_item_stop_on_target">Stop on target</menu-item>
   </menu>
+
+
+  <strings>
+    <string id="Device">fr630</string>
+    <string id="isTouchScreen">true</string>
+  </strings>
 </resources>
