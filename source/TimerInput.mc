@@ -57,24 +57,6 @@ class TouchScreenInputDelegate extends TimerInputDelegate {
         new DistancePicker("Distance"),
         new DistancePickerDelegate(),
         Ui.SLIDE_IMMEDIATE);
-      
-      return;
-
-      var manualTargetPM = App.getApp().getProperty("manualTargetPM");
-      var oldDistance = App.getApp().getProperty("distance");
-      var currIndex = arrayIndexOf(defaultDistances, oldDistance);
-
-      currIndex += 1;
-      if (currIndex >= defaultDistances.size()) {
-        currIndex = 0;
-      }
-      //var distance = defaultDistances[currIndex];
-      App.getApp().setProperty("distance", distance);
-
-      var time = (manualTargetPM * distance) / 1000;
-
-      App.getApp().setProperty("target", time);
-      Ui.requestUpdate();
       return;
     }
 

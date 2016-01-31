@@ -1,4 +1,5 @@
 using Toybox.Application as App;
+using Toybox.WatchUi as Ui;
 
 enum {
   start_on_countdown,
@@ -62,7 +63,11 @@ class UltiTrackApp extends App.AppBase {
 
   function getInitialView() {
     view = new TimerView();
-    return [ view, new TouchScreenInputDelegate() ];
+    if (isTouchScreen()) {
+      return [ view, new TouchScreenInputDelegate() ];
+    } else {
+      return [ view, new NonTouchScreenInputDelegate() ];
+    }
   }
 
   function onTick(elapsed) {

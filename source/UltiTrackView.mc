@@ -89,6 +89,10 @@ class TimerView extends Ui.View {
   }
 
   function openTheMenu() {
-    Ui.pushView( new Rez.Menus.MainMenu(), new MainMenuDelegate(), Ui.SLIDE_UP );
+    if (App.getApp().isTouchScreen()) {
+      Ui.pushView( new Rez.Menus.WorkoutSettingsMenu(), new WorkoutSettingsMenuDelegate(), Ui.SLIDE_UP );
+    } else {
+      Ui.pushView( new Rez.Menus.WorkoutMenu(), new WorkoutMenuDelegate(), Ui.SLIDE_UP );
+    }
   }
 }
