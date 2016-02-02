@@ -95,6 +95,7 @@ class Workout {
       if (timer.running == false) {
         reset();
       } else {
+        mOnTick.invoke(segments[currentSegment][1]);
         timer.stop();
         stop();
       }

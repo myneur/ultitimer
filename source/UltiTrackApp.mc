@@ -18,8 +18,8 @@ var defaultProperties = {
   "distance" => 200,
   "rest" => 60,
   "reps" => 1,
-  "start" => start_on_countdown,
-  "stop" => stop_on_button
+  "start" => start_on_button,
+  "stop" => stop_on_target
 };
 
 var defaultDistances = [90, 100, 120, 150, 180, 200, 220, 250, 300, 350, 400];
