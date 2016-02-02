@@ -2,17 +2,21 @@ using Toybox.Application as App;
 using Toybox.Attention as Attention;
 
 class Workout {
-  var segments = [];
-  var currentSegment = 0;
+  var segments = {
+    :plan => [],
+    :current => null,
+    :history => []
+  };
 
-  var notifications = [];
-  var currentNotification = 0;
+  var segmentPtrs = {
+    :plan => 0,
+    :history => 0
+  };
 
-  var timer;
   var running = false;
+  var timer;
 
   var mOnTick;
-  var mSplitDistance = 100;
 
   function initialize(onTick) {
     mOnTick = onTick;
@@ -20,15 +24,14 @@ class Workout {
   }
 
   function start() {
-    setSegments();
-    setNotifications();
+    System.println("start");
+    createPlan();
 
     running = true;
-    timer.start();
-  }
 
-  function unpause() {
-    timer.start();
+    segments[:current] = segments[:plan][0];
+
+    timer.start(37000, method(:targetReached));
   }
 
   function stop() {
@@ -37,218 +40,146 @@ class Workout {
 
   function reset() {
     running = false;
-    currentSegment = 0;
-    segments = [];
-    currentNotification = 0;
-    notifications = [];
+    segmentPtrs[:plan] = 0;
+    segmentPtrs[:history] = 0;
+    segments[:plan] = [];
+    segments[:current] = null;
+    segments[:history] = [];
+
     timer.reset();
   }
 
   function destroy() {
-    timer.destroy();
-    mOnTick = null;
+   timer.destroy();
+   mOnTick = null;
   }
 
-  function getCurrentSegment() {
-    if (currentSegment >= segments.size()) {
-      return null;
-    }
-    return segments[currentSegment];
-  }
+  function createPlan() {
+    var app = App.getApp();
+    var start = app.getProperty("start");
+    var reps = app.getProperty("reps");
+    var distance = app.getProperty("distance");
+    var target = app.getProperty("target");
+    var rest = app.getProperty("rest");
 
-  function getCurrentRep() {
-    if (running ==  false) {
-      return 1;
-    }
-    var result = 0;
+    var mode = :run;
 
-    for (var i = 0; i <= currentSegment; i++) {
-      if (segments[i][0] == :rest) {
-        result += 1;
+    var size = reps * 2 - 1;
+
+    segments[:plan] = new [size];
+    segments[:history] = new [size];
+
+    for (var i = 0; i < size; i++) {
+      if (mode == :rest) {
+        segments[:plan][i] = {
+          :type => :rest,
+          :start => {
+            :trigger => null
+          },
+          :stop => {
+            :trigger => :button
+          },
+          :target => {
+            :time => 2000
+          }
+        };
+        mode = :run;
+      } else if (mode == :run) {
+        segments[:plan][i] = {
+          :type => :run,
+          :start => {
+            :trigger => :button
+          },
+          :stop => {
+            :trigger => :time
+          },
+          :target => {
+            :time => target * 1000,
+            :distance => distance
+          }
+        };
+        mode = :rest;
       }
     }
-
-    if (result == 0) {
-      return 1;
-    }
-    return result;
+    System.println("Plan:");
+    System.println(segments[:plan]);
   }
 
-  function getNextSegment() {
-    if (currentSegment + 1 >= segments.size()) {
-      return null;
-    }
-    return segments[currentSegment + 1];
+  function targetReached() {
+    System.println("Target reached");
   }
 
-  function getPrevSegment() {
-    if (currentSegment - 1 < 0) {
-      return null;
-    }
-    return segments[currentSegment - 1];
-  }
+  function advanceSegment() {
+    System.println("advanceSegment");
+    var segment = getCurrentSegment();
 
-  function switchMode() {
-    segments[currentSegment][3] = timer.elapsed;
-    
-    if (currentSegment + 1 >= segments.size()) {
+    segments[:history][segmentPtrs[:history]] = {
+      :type => segment[:type],
+      :result => {
+        :time => timer.elapsed
+      }
+    };
+    segmentPtrs[:history] += 1;
+
+    System.println("History:");
+    System.println(segments[:history]);
+
+    if (segmentPtrs[:plan] + 1 >= segments[:plan].size()) {
       if (timer.running == false) {
         reset();
       } else {
-        timer.stop();
         stop();
       }
       return;
     }
 
-    currentSegment += 1;
+    segmentPtrs[:plan] += 1;
 
-    setNotifications();
     timer.stop();
     timer.reset();
     timer.start();
   }
 
-  function setSegments() {
-    var app = App.getApp();
-    var reps = app.getProperty("reps");
-    var target = app.getProperty("target");
-    var distance = app.getProperty("distance");
-    var rest = app.getProperty("rest");
-
-
-    var mode;
-    var useInitialCountdown = false;
-
-    var start = app.getProperty("start");
-
-    if (start == start_on_countdown) {
-      mode = :rest;
-      useInitialCountdown = true;
+  function onAdvanceButton() {
+    System.println("onAdvanceButton");
+    if (running == false) {
+      start();
     } else {
-      mode = :run;
-    }
-
-    var size = reps + (reps - 1);
-
-    if (useInitialCountdown) {
-      size += 1;
-    }
-
-    segments = new [size];
-
-    for (var i = 0; i < size; i++) {
-      if (mode == :run) {
-        segments[i] = [:run, target * 1000, distance, null];
-        mode = :rest;
-      } else {
-        if (useInitialCountdown == true && i == 0) {
-          segments[i] = [:rest, 2000, null, null];
-        } else {
-          segments[i] = [:rest, rest * 1000, null, null];
-        }
-        mode = :run;
-      }
+      advanceSegment();
     }
   }
 
-  function setNotifications() {
-    var segment = segments[currentSegment];
-    var target = segment[1];
+  function getCurrentSegment() {
+    if (segments[:plan].size() == 0) {
+      return null;
+    }
+    return segments[:plan][segmentPtrs[:plan]];
+  }
 
-    var countdown = 2;
-    if (segment[0] == :run) {
-      countdown = 5;
+  function getCurrentRep() {
+    return 1;
+    if (running == false) {
+      return 1;
     }
 
-    var size = countdown;
-    var i = 0;
-    var splits = 0;
-    var distance = 0;
-    if (segment[0] == :run) {
-      distance = segment[2];
+    var result = 0;
 
-      var isPartial = distance % 100 > 0;
-
-      splits = ((distance - (distance % 100)) / 100);
-      if (!isPartial) {
-        splits -= 1;
+    for (var i = 0; i < segments[:history].size(); i++) {
+      if (segments[:history][i][:type] == :run) {
+        result += 1;
       }
-
-      size += splits;
-      size += 2;
     }
 
-    notifications = new [size];
-
-    if (segment[0] == :run) {
-      notifications[0] =  [
-        0,
-        Attention.TONE_START,
-        [new Attention.VibeProfile(100, 400)]
-      ];
-      i += 1;
-    }
-
-    for (var j = 0; j < splits; j++) {
-      var splitTime = target / distance * 100;
-      notifications[j + i] = [
-        splitTime * (j + 1),
-        Attention.TONE_LAP,
-        [new Attention.VibeProfile(100, 400)]
-      ];
-    }
-    i += splits;
-
-    for (var j = 0; j < countdown; j++) {
-      notifications[j + i] = [
-        target - (1000 * (countdown - j)),
-        Attention.TONE_LOUD_BEEP,
-        null
-      ];
-    }
-    i += countdown;
-
-    if (segment[0] == :run) {
-      notifications[size - 1] = [
-        target,
-        Attention.TONE_TIME_ALERT,
-        [new Attention.VibeProfile(100, 400)]
-      ];
-    }
-
-    currentNotification = 0;
+    return result + 1;
   }
 
   function onTick(elapsed) {
-    if (currentNotification < notifications.size() &&
-        notifications[currentNotification][0] <= elapsed - (timer.mInterval /
-2)) {
-      var notification = notifications[currentNotification];
+    System.println("onTick");
+    var segment = segments[:current];
 
-      Attention.backlight(true);
-      Attention.playTone(notification[1]);
-      if (notification[2]) {
-        Attention.vibrate(notification[2]);
-      }
-
-      currentNotification++;
-
-      while (currentNotification + 1 < notifications.size() &&
-        notifications[currentNotification][0] >=
-notifications[currentNotification + 1][0]) {
-        currentNotification++;
-      }
-    }
-
-    var app = App.getApp();
-    var segment = app.workout.getCurrentSegment();
-    var stop = app.getProperty("stop");
-
-    if (segment[0] == :rest ||
-        stop == stop_on_target) {
-      if (elapsed >= segment[1]) {
-        app.workout.switchMode();
+    if (segment[:target][:type] == :time) {
+      if (elapsed >= segment[:target][:time]) {
+        advanceSegment();
         return;
       }
     }

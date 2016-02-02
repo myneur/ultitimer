@@ -55,9 +55,9 @@ class WorkoutSettingsMenuDelegate extends Ui.MenuInputDelegate {
 class WorkoutSettingsStartMenuDelegate extends Ui.MenuInputDelegate {
   function onMenuItem(item) {
     var value = start_on_countdown;
-    if ( item == :menu_item_start_on_countdown ) {
+    if ( item == :menu_item_workout_settings_start_on_countdown ) {
       value = start_on_countdown;
-    } else if ( item == :menu_item_start_on_button ) {
+    } else if ( item == :menu_item_workout_settings_start_on_button ) {
       value = start_on_button;
     }
     App.getApp().setProperty("start", value);
@@ -68,9 +68,9 @@ class WorkoutSettingsStartMenuDelegate extends Ui.MenuInputDelegate {
 class WorkoutSettingsStopMenuDelegate extends Ui.MenuInputDelegate {
   function onMenuItem(item) {
     var value = stop_on_button;
-    if ( item == :menu_item_stop_on_button ) {
+    if ( item == :menu_item_workout_settings_stop_on_button ) {
       value = stop_on_button;
-    } else if ( item == :menu_item_stop_on_target ) {
+    } else if ( item == :menu_item_workout_settings_stop_on_target ) {
       value = stop_on_target;
     }
     App.getApp().setProperty("stop", value);

@@ -22,10 +22,11 @@ class TimerView extends Ui.View {
     var elapsed = app.workout.timer.elapsed;
     var string = "";
 
-    var segment = app.workout.getCurrentSegment();
+    var segment = app.workout.segments[:current];
 
     if (app.workout.running) {
-      if (segment[0] == :run) {
+/*
+      if (segment[:type] == :run) {
         string = ((elapsed / 10).toFloat() / 100).format("%03.2f");
       } else {
         var prevSegment = app.workout.getPrevSegment();
@@ -36,6 +37,7 @@ class TimerView extends Ui.View {
           string = (nextSegment[1] / 1000) + "s";
         }
       }
+*/
     } else {
       var time = app.getProperty("target");
       string = time + "s";
@@ -45,15 +47,6 @@ class TimerView extends Ui.View {
     string = "";
 
     if (app.workout.running) {
-      if (segment[0] == :rest) {
-        string = ((segment[1] - app.workout.timer.elapsed + 600) /
-1000).format("%d");
-      } else {
-        var nextSegment = app.workout.getNextSegment();
-        if (nextSegment != null) {
-          string = (nextSegment[1] / 1000) + "s";
-        }
-      }
     } else {
       var reps = app.getProperty("reps");
       if (reps > 1) {
