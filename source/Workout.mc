@@ -63,7 +63,7 @@ class Workout {
     var result = 0;
 
     for (var i = 0; i <= currentSegment; i++) {
-      if (segments[i][0] == :rest) {
+      if (segments[i][0] == :run) {
         result += 1;
       }
     }

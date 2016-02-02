@@ -82,8 +82,6 @@ class RestPickerDelegate extends Ui.PickerDelegate {
 
   function onAccept(values) {
     var value = values[0] * 60 + values[1];
-    System.println("value:");
-    System.println(value);
     App.getApp().setProperty("rest", value);
     Ui.popView(Ui.SLIDE_IMMEDIATE);
   }
