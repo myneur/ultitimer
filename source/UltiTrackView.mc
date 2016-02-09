@@ -25,7 +25,6 @@ class TimerView extends Ui.View {
     var segment = app.workout.segments[:current];
 
     if (app.workout.running) {
-/*
       if (segment[:type] == :run) {
         string = ((elapsed / 10).toFloat() / 100).format("%03.2f");
       } else {
@@ -37,7 +36,6 @@ class TimerView extends Ui.View {
           string = (nextSegment[1] / 1000) + "s";
         }
       }
-*/
     } else {
       var time = app.getProperty("target");
       string = time + "s";
@@ -78,6 +76,7 @@ class TimerView extends Ui.View {
   }
 
   function onTick(elapsed) {
+    System.println("Tick: " + elapsed);
     Ui.requestUpdate();
   }
 

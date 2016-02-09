@@ -20,7 +20,7 @@ class Workout {
 
   function initialize(onTick) {
     mOnTick = onTick;
-    timer = new UltiTimer(method(:onTick));
+    timer = new UltiTimer(onTick);
   }
 
   function start() {
@@ -29,9 +29,7 @@ class Workout {
 
     running = true;
 
-    segments[:current] = segments[:plan][0];
-
-    timer.start(segments[:current][:target][:time], method(:targetReached));
+    advanceSegment();
   }
 
   function stop() {
@@ -122,6 +120,12 @@ class Workout {
 
     var segment = getCurrentSegment();
 
+    if (segment == null) {
+      segments[:current] = segments[:plan][0];
+      timer.start(segments[:current][:target][:time], method(:targetReached));
+      return;
+    }
+
     segments[:history][segmentPtrs[:history]] = {
       :type => segment[:type],
       :result => {
@@ -154,10 +158,15 @@ class Workout {
     if (running == false) {
       start();
     } else {
-      var segment = getCurrentSegment();
+      if (timer.running == true) {
+        var segment = getCurrentSegment();
 
-      if (segment[:stop][:trigger] == :button) {
-        advanceSegment();
+        if (segment[:stop][:trigger] == :button) {
+          advanceSegment();
+        }
+      } else {
+        stop();
+        reset();
       }
     }
   }

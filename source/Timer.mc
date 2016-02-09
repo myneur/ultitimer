@@ -36,7 +36,6 @@ class UltiTimer {
     }
 
     elapsed += now - mLastTime;
-    System.println("onTick: " + elapsed);
 
     mLastTime = now;
     mOnTick.invoke(elapsed);
