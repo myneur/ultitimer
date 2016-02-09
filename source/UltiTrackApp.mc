@@ -13,13 +13,19 @@ enum {
   stop_on_target
 }
 
-var propertiesNames = ["target", "distance", "rest", "reps", "start", "stop"];
+enum {
+  backlight_on,
+  backlight_off
+}
+
+var propertiesNames = ["target", "distance", "rest", "reps", "start", "stop", "backlight"];
 var defaultProperties = {
   "distance" => 200,
   "rest" => 60,
   "reps" => 1,
   "start" => start_on_button,
-  "stop" => stop_on_target
+  "stop" => stop_on_target,
+  "backlight" => backlight_on
 };
 
 var defaultDistances = [90, 100, 120, 150, 180, 200, 220, 250, 300, 350, 400];

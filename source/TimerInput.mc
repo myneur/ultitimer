@@ -93,34 +93,45 @@ class TouchScreenInputDelegate extends TimerInputDelegate {
   function onKey(evt) {
     var key = evt.getKey();
     var app = App.getApp();
+    var backlight = app.getProperty("backlight");
 
     if (key == 4) { // Start in the emulator
       var segment = app.workout.getCurrentSegment();
       if (app.workout.running && segment != null) {
         if (segment[0] == :rest) {
           if (app.workout.timer.running) {
-            Attention.backlight(true);
+            if (backlight == backlight_on) {
+              Attention.backlight(true);
+            }
             Attention.playTone(Attention.TONE_STOP);
             app.workout.stop();
           } else {
-            Attention.backlight(true);
+            if (backlight == backlight_on) {
+              Attention.backlight(true);
+            }
             Attention.playTone(Attention.TONE_STOP);
             app.workout.unpause();
           }
         } else {
-          Attention.backlight(true);
+          if (backlight == backlight_on) {
+            Attention.backlight(true);
+          }
           Attention.playTone(Attention.TONE_STOP);
           app.workout.switchMode();
           Ui.requestUpdate();
         }
       } else {
         if (app.workout.segments.size() > 0) {
-          Attention.backlight(true);
+          if (backlight == backlight_on) {
+            Attention.backlight(true);
+          }
           Attention.playTone(Attention.TONE_STOP);
           app.workout.reset();
           Ui.requestUpdate();
         } else {
-          Attention.backlight(true);
+          if (backlight == backlight_on) {
+            Attention.backlight(true);
+          }
           Attention.playTone(Attention.TONE_START);
           app.workout.start();
         }

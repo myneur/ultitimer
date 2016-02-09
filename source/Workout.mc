@@ -222,12 +222,16 @@ class Workout {
   }
 
   function onTick(elapsed) {
+    var app = App.getApp();
     if (currentNotification < notifications.size() &&
         notifications[currentNotification][0] <= elapsed - (timer.mInterval /
 2)) {
       var notification = notifications[currentNotification];
+      var backlight = app.getProperty("backlight");
 
-      Attention.backlight(true);
+      if (backlight == backlight_on) {
+        Attention.backlight(true);
+      }
       Attention.playTone(notification[1]);
       if (notification[2]) {
         Attention.vibrate(notification[2]);
@@ -242,7 +246,6 @@ notifications[currentNotification + 1][0]) {
       }
     }
 
-    var app = App.getApp();
     var segment = app.workout.getCurrentSegment();
     var stop = app.getProperty("stop");
 

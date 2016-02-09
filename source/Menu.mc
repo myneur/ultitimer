@@ -48,6 +48,8 @@ class WorkoutSettingsMenuDelegate extends Ui.MenuInputDelegate {
       Ui.pushView( new Rez.Menus.WorkoutSettingsStartMenu(), new WorkoutSettingsStartMenuDelegate(), Ui.SLIDE_UP );
     } else if ( item == :menu_item_workout_settings_stop ) {
       Ui.pushView( new Rez.Menus.WorkoutSettingsStopMenu(), new WorkoutSettingsStopMenuDelegate(), Ui.SLIDE_UP );
+    } else if ( item == :menu_item_workout_settings_backlight ) {
+      Ui.pushView( new Rez.Menus.WorkoutSettingsBacklightMenu(), new WorkoutSettingsBacklightMenuDelegate(), Ui.SLIDE_UP );
     }
   }
 }
@@ -74,6 +76,19 @@ class WorkoutSettingsStopMenuDelegate extends Ui.MenuInputDelegate {
       value = stop_on_target;
     }
     App.getApp().setProperty("stop", value);
+    Ui.popView(Ui.SLIDE_IMMEDIATE);
+  }
+}
+
+class WorkoutSettingsBacklightMenuDelegate extends Ui.MenuInputDelegate {
+  function onMenuItem(item) {
+    var value = backlight_on;
+    if ( item == :menu_item_workout_settings_backlight_on ) {
+      value = backlight_on;
+    } else if ( item == :menu_item_workout_settings_backlight_off ) {
+      value = backlight_off;
+    }
+    App.getApp().setProperty("backlight", value);
     Ui.popView(Ui.SLIDE_IMMEDIATE);
   }
 }
