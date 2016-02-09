@@ -17,21 +17,26 @@ class UltiTimer {
   }
 
   function start(target, onDone) {
+    System.println("Timer starts");
     running = true;
     mOnDone = onDone;
     mTarget = target;
 
     mTimer.start(method(:onTick), mInterval, true); 
     mLastTime = System.getTimer();
-    mOnTick.invoke(elapsed);
+    onTick();
   }
 
   function onTick() {
     var now = System.getTimer();
-    elapsed += now - mLastTime;
-    if (elapsed >= mTarget) {
+
+    if (elapsed < mTarget &&
+       elapsed + now - mLastTime >= mTarget) {
       mOnDone.invoke(elapsed);
     }
+
+    elapsed += now - mLastTime;
+    System.println("onTick: " + elapsed);
 
     mLastTime = now;
     mOnTick.invoke(elapsed);

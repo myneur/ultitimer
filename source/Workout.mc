@@ -31,14 +31,16 @@ class Workout {
 
     segments[:current] = segments[:plan][0];
 
-    timer.start(37000, method(:targetReached));
+    timer.start(segments[:current][:target][:time], method(:targetReached));
   }
 
   function stop() {
+    System.println("stop");
     timer.stop();
   }
 
   function reset() {
+    System.println("reset");
     running = false;
     segmentPtrs[:plan] = 0;
     segmentPtrs[:history] = 0;
@@ -91,7 +93,7 @@ class Workout {
             :trigger => :button
           },
           :stop => {
-            :trigger => :time
+            :trigger => :button
           },
           :target => {
             :time => target * 1000,
@@ -106,11 +108,18 @@ class Workout {
   }
 
   function targetReached() {
+    var segment = getCurrentSegment();
+
     System.println("Target reached");
+
+    if (segment[:stop][:trigger] == :time) {
+      advanceSegment();
+    }
   }
 
   function advanceSegment() {
     System.println("advanceSegment");
+
     var segment = getCurrentSegment();
 
     segments[:history][segmentPtrs[:history]] = {
@@ -125,7 +134,7 @@ class Workout {
     System.println(segments[:history]);
 
     if (segmentPtrs[:plan] + 1 >= segments[:plan].size()) {
-      if (timer.running == false) {
+      if (running == false) {
         reset();
       } else {
         stop();
@@ -145,15 +154,16 @@ class Workout {
     if (running == false) {
       start();
     } else {
-      advanceSegment();
+      var segment = getCurrentSegment();
+
+      if (segment[:stop][:trigger] == :button) {
+        advanceSegment();
+      }
     }
   }
 
   function getCurrentSegment() {
-    if (segments[:plan].size() == 0) {
-      return null;
-    }
-    return segments[:plan][segmentPtrs[:plan]];
+    return segments[:current];
   }
 
   function getCurrentRep() {
@@ -174,16 +184,6 @@ class Workout {
   }
 
   function onTick(elapsed) {
-    System.println("onTick");
-    var segment = segments[:current];
-
-    if (segment[:target][:type] == :time) {
-      if (elapsed >= segment[:target][:time]) {
-        advanceSegment();
-        return;
-      }
-    }
-
     mOnTick.invoke(elapsed);
   }
 }
